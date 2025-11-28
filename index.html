@@ -72,9 +72,9 @@
         .countdown {
             display: flex;
             justify-content: center;
-            gap: 1rem;
+            gap: 0.5rem;
             margin-top: 2rem;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
         }
 
         .countdown-item {
@@ -82,14 +82,15 @@
             backdrop-filter: blur(10px);
             border: 2px solid rgba(212, 175, 55, 0.4);
             border-radius: 10px;
-            padding: 1rem;
-            min-width: 70px;
+            padding: 0.75rem 0.5rem;
+            width: 60px;
+            flex-shrink: 0;
             text-align: center;
         }
 
         .countdown-number {
             display: block;
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: bold;
             color: #f4e4c1;
             line-height: 1;
@@ -97,11 +98,11 @@
 
         .countdown-label {
             display: block;
-            font-size: 0.8rem;
+            font-size: 0.65rem;
             color: #d4af37;
-            margin-top: 0.5rem;
+            margin-top: 0.4rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
         .hero-image {
@@ -539,9 +540,12 @@ END:VCALENDAR`;
                     </div>
                     <div class="countdown-item">
                         <span class="countdown-number">${minutes}</span>
-                        <span class="countdown-label">Minutes</span>
+                        <span class="countdown-label">Min</span>
                     </div>
-                    
+                    <div class="countdown-item">
+                        <span class="countdown-number">${seconds}</span>
+                        <span class="countdown-label">Sec</span>
+                    </div>
                 `;
             }
         }
