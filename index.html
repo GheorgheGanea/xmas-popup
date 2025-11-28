@@ -485,11 +485,17 @@ STATUS:CONFIRMED
 END:VEVENT
 END:VCALENDAR`;
 
-            // Try to detect if user is on mobile
+            // Detect browser and platform
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-            if (isMobile) {
-                // For mobile devices, create downloadable ICS file
+            if (isIOS || isSafari) {
+                // For Safari/iOS: Use data URL to trigger calendar app directly
+                const dataUrl = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(icsContent);
+                window.location.href = dataUrl;
+            } else if (isMobile) {
+                // For other mobile browsers (Chrome on Android, etc.): Use blob download
                 const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
                 const url = window.URL.createObjectURL(blob);
                 const link = document.createElement('a');
@@ -500,7 +506,7 @@ END:VCALENDAR`;
                 document.body.removeChild(link);
                 window.URL.revokeObjectURL(url);
             } else {
-                // For desktop, use Google Calendar (fallback to ICS if needed)
+                // For desktop: Use Google Calendar
                 const startDate = event.startDate.replace(/[-:]/g, '').replace('.000', '');
                 const endDate = event.endDate.replace(/[-:]/g, '').replace('.000', '');
                 const googleCalUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${startDate}/${endDate}&details=${encodeURIComponent(event.description)}&location=${encodeURIComponent(event.location)}`;
