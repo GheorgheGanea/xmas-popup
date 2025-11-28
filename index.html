@@ -471,13 +471,41 @@
                 endDate: '2025-12-14T17:00:00'
             };
 
-            // Format dates for Google Calendar
-            const startDate = event.startDate.replace(/[-:]/g, '').replace('.000', '');
-            const endDate = event.endDate.replace(/[-:]/g, '').replace('.000', '');
+            // Create ICS file content
+            const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Christmas Italo PopUp//EN
+BEGIN:VEVENT
+DTSTART:20251213T100000Z
+DTEND:20251214T170000Z
+SUMMARY:${event.title}
+DESCRIPTION:${event.description}
+LOCATION:${event.location}
+STATUS:CONFIRMED
+END:VEVENT
+END:VCALENDAR`;
 
-            const googleCalUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${startDate}/${endDate}&details=${encodeURIComponent(event.description)}&location=${encodeURIComponent(event.location)}`;
+            // Try to detect if user is on mobile
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-            window.open(googleCalUrl, '_blank');
+            if (isMobile) {
+                // For mobile devices, create downloadable ICS file
+                const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'christmas-popup-market.ics');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+            } else {
+                // For desktop, use Google Calendar (fallback to ICS if needed)
+                const startDate = event.startDate.replace(/[-:]/g, '').replace('.000', '');
+                const endDate = event.endDate.replace(/[-:]/g, '').replace('.000', '');
+                const googleCalUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${startDate}/${endDate}&details=${encodeURIComponent(event.description)}&location=${encodeURIComponent(event.location)}`;
+                window.open(googleCalUrl, '_blank');
+            }
         }
 
         // Countdown Timer
